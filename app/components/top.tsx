@@ -1,7 +1,7 @@
-import Link from 'next/link'
+import { Text } from '@chakra-ui/react'
 
 export default function Top(){
     return(
-        <div>This is a top page.</div>
+        <Text fontSize='6xl'>This is a top page.</Text>
     )
 }

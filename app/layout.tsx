@@ -1,4 +1,5 @@
-import "./globals.css";
+import { ChakraProvider } from '@chakra-ui/react'
+
 export const metadata = {
   title: "app-routerテストページ",
   description: "Next.jsのApp Routerでコンポーネント管理する",
@@ -11,7 +12,11 @@ export default function RootLayout({
 }) {
   return (
     <html lang="ja">
-      <body className="">{children}</body>
+      <body>
+        <ChakraProvider>
+        {children}
+        </ChakraProvider>
+        </body>
     </html>
   );
 }
