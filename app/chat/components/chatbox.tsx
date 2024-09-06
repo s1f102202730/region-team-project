@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { Box, Input, Button, VStack, HStack, Text } from '@chakra-ui/react';
+import { ask } from '../../../lib/api';
 
 type Message = {
   text: string;
@@ -10,15 +11,24 @@ const ChatBox: React.FC = () => {
   const [message, setMessage] = useState<string>("");
   const [messages, setMessages] = useState<Message[]>([]);
 
-  const handleSend = () => {
+  const handleSend = async () => {
     if (message.trim()) {
       const newMessages: Message[] = [
         ...messages, 
         { text: message, sender: 'user' },
-        { text: 'AIの応答...', sender: 'ai' } // AIからの仮の応答
       ];
       setMessages(newMessages);
+    
+      const response = await ask(message);
+      if (response) {
+        setMessages(prevMessages => [
+          ...prevMessages, 
+          { text: response, sender: 'ai' }
+        ]);
+      }
+
       setMessage(""); // メッセージ送信後にクリア
+
     }
   };
 

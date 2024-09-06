@@ -18,6 +18,10 @@ services:
       - DB_NAME=$DB_NAME
       - DB_USER=$DB_USER
       - DB_PASS=$DB_PASS
+      - REACT_APP_OPENAI_API_KEY=your-api-key-here
+      - REACT_APP_OPENAI_API_BASE=https://api.openai.iniad.org/api/v1
+
+
   db:
    image: postgres:15
    hostname: db
