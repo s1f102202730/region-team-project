@@ -13,11 +13,14 @@ COPY package*.json ./
 RUN npm install -g npm@9.7.2 node-gyp
 RUN npm install --legacy-peer-deps
 
-# 残りのアプリケーションコードをコピー
-COPY ./ /app/
+# react-hook-formをインストール
+RUN npm install react-hook-form next-auth
 
 # 明示的にopenaiモジュールを再インストール
 RUN npm install openai
+
+# 残りのアプリケーションコードをコピー
+COPY ./ /app/
 
 # アプリケーションの起動
 CMD ["npm", "run", "dev"]
