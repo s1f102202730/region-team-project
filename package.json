@@ -13,11 +13,13 @@
     "@chakra-ui/react": "^2.8.2",
     "@emotion/react": "^11.13.0",
     "@emotion/styled": "^11.13.0",
-    "framer-motion": "^11.3.27",
+    "framer-motion": "^11.3.28",
     "next": "14.2.5",
+    "next-auth": "^4.24.7",
     "react": "^18",
     "react-dom": "^18",
-    "openai": "^4.0.0"
+    "react-hook-form": "^7.53.0",
+    "openai": "^4.x.x"
   },
   "devDependencies": {
     "@types/node": "^20",
