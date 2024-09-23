@@ -22,5 +22,12 @@ RUN npm install openai
 # 残りのアプリケーションコードをコピー
 COPY ./ /app/
 
+=======
+# 残りのアプリケーションコードをコピー
+COPY ./ /app/
+
+# 明示的にopenaiモジュールを再インストール
+RUN npm install openai
+
 # アプリケーションの起動
 CMD ["npm", "run", "dev"]
