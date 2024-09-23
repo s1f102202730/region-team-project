@@ -21,7 +21,8 @@
     "openai": "^4.x.x",
     "react": "^18",
     "react-dom": "^18",
-    "react-hook-form": "^7.53.0"
+    "react-hook-form": "^7.53.0",
+    "openai": "^4.x.x"
   },
   "devDependencies": {
     "@types/node": "^20",
