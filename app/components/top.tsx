@@ -56,6 +56,7 @@ export default function Component() {
       <div style={styles.optionsContainer}>
         <div style={styles.option}>
           <h2 style={styles.title}>観光客</h2>
+          {/* tourist-login */}
           <Link href="/tourist-login" passHref>
             <div style={styles.button}>
               <PersonIcon />
@@ -64,7 +65,8 @@ export default function Component() {
         </div>
         <div style={styles.option}>
           <h2 style={styles.title}>地域</h2>
-          <Link href="/regional-login" passHref>
+          {/* municipality-login */}
+          <Link href="/municipality-login" passHref>
             <div style={styles.button}>
               <PersonIcon />
             </div>
