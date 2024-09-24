@@ -11,16 +11,16 @@ const MunicipalityRegisterPage = () => {
 
   const handleRegister = () => {
     // 既存のアカウントを取得
-    const existingAccounts = JSON.parse(localStorage.getItem('municipalityAccounts') || '[]');
+    const existingAccounts = JSON.parse(localStorage.getItem('accounts') || '[]');
 
-    // 新しいアカウントを追加
-    const newAccount = { username, password };
+    // 新しいアカウントを追加 (ロールを含む)
+    const newAccount = { username, password, role: 'municipality' };
     existingAccounts.push(newAccount);
 
     // ローカルストレージに保存
-    localStorage.setItem('municipalityAccounts', JSON.stringify(existingAccounts));
+    localStorage.setItem('accounts', JSON.stringify(existingAccounts));
 
-    // 成功メッセージを設定し、ログインページに遷移
+    // 成功メッセージを設定し、ログインページにリダイレクト
     setSuccessMessage('アカウントが作成されました。ログインページにリダイレクトします。');
     setTimeout(() => {
       router.push('/municipality-login');

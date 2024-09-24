@@ -11,12 +11,12 @@ const MunicipalityLoginPage = () => {
 
   const handleLogin = () => {
     // ローカルストレージからアカウント情報を取得
-    const accounts = JSON.parse(localStorage.getItem('municipalityAccounts') || '[]');
+    const accounts = JSON.parse(localStorage.getItem('accounts') || '[]');
 
-    // 入力されたユーザー名とパスワードが一致するか確認
+    // 入力されたユーザー名、パスワード、ロールが一致するか確認
     const accountExists = accounts.find(
-      (account: { username: string; password: string }) =>
-        account.username === username && account.password === password
+      (account: { username: string; password: string; role: string }) =>
+        account.username === username && account.password === password && account.role === 'municipality'
     );
 
     if (accountExists) {
@@ -46,7 +46,6 @@ const MunicipalityLoginPage = () => {
         onChange={(e) => setPassword(e.target.value)}
       />
       <button onClick={handleLogin}>ログイン</button>
-      <p>アカウントがありませんか？ <a href="/municipality-register">アカウント作成</a></p>
     </div>
   );
 };
