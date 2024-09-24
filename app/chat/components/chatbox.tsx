@@ -1,102 +1,106 @@
-import React, { useState, useRef, useEffect } from 'react'
-import {
-  Box,
-  VStack,
-  HStack,
-  Input,
-  Button,
-  Text,
-  Flex,
-  Container,
-  Heading,
-} from '@chakra-ui/react'
-import { ask } from '../../../lib/api'
+import React, { useState } from 'react';
+import { Box, Input, Button, VStack, HStack, Text } from '@chakra-ui/react';
+import { ask } from '../../../lib/api';
 
 type Message = {
-  id: number;
   text: string;
   sender: 'user' | 'ai';
-  time: string;
 };
 
-export default function ChatBox() {
-  const [message, setMessage] = useState<string>("")
-  const [messages, setMessages] = useState<Message[]>([])
-  const messagesEndRef = useRef<HTMLDivElement>(null)
-
-  const scrollToBottom = () => {
-    messagesEndRef.current?.scrollIntoView({ behavior: "smooth" })
-  }
-
-  useEffect(scrollToBottom, [messages])
+const ChatBox: React.FC = () => {
+  const [message, setMessage] = useState<string>("");
+  const [messages, setMessages] = useState<Message[]>([]);
+  const [step, setStep] = useState<number>(1);
+  const [season, setSeason] = useState<string>("");
+  const [location, setLocation] = useState<string>("");
+  const [activity, setActivity] = useState<string>("");
+  const [budget, setBudget] = useState<string>("");
 
   const handleSend = async () => {
     if (message.trim()) {
-      const newUserMessage: Message = {
-        id: messages.length + 1,
-        text: message,
-        sender: 'user',
-        time: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
-      }
-      setMessages(prevMessages => [...prevMessages, newUserMessage])
-      setMessage("")
+      const newMessages: Message[] = [...messages, { text: message, sender: 'user' }];
+      setMessages(newMessages);
+      
+      let response = "";
 
-      const response = await ask(message)
-      if (response) {
-        const newAiMessage: Message = {
-          id: messages.length + 2,
-          text: response,
-          sender: 'ai',
-          time: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
-        }
-        setMessages(prevMessages => [...prevMessages, newAiMessage])
+      switch (step) {
+        case 1: // 会話の開始
+          response = "こんにちは！旅行の計画を立てましょう。最初に、旅行する季節を教えてください。";
+          setStep(2);
+          break;
+        case 2: // 季節を尋ねる
+          setSeason(message);
+          response = "素晴らしい！次に、旅行したい場所はどこですか？";
+          setStep(3);
+          break;
+        case 3: // 場所を尋ねる
+          setLocation(message);
+          response = "いい選択です！どんなアクティビティを楽しみたいですか？";
+          setStep(4);
+          break;
+        case 4: // アクティビティを尋ねる
+          setActivity(message);
+          response = "それでは、予算はどのくらいですか？";
+          setStep(5);
+          break;
+        case 5: // 予算を尋ねる
+          setBudget(message);
+          
+          // APIを呼び出して提案を取得
+          response = "提案を作成しています。少々お待ちください...";
+          setMessages(prevMessages => [...prevMessages, { text: response, sender: 'ai' }]);
+          
+          const apiResponse = await ask({
+            message: `提案をお願いします！季節: ${season}, 場所: ${location}, アクティビティ: ${activity}, 予算: ${budget}`,
+            season,
+            time: "",  // 追加で時間の詳細が必要ならここに入力
+            weather: "" // 天気の詳細が必要ならここに入力
+          });
+
+          // APIのレスポンスを表示
+          response = apiResponse || "提案が見つかりませんでした。";
+          setStep(6);
+          break;
+        case 6: // 提案後のフォローアップ
+          response = "観光地の提案は以上です。他に質問があればどうぞ。";
+          setStep(1);  // 最初に戻る
+          break;
+        default:
+          response = "エラーが発生しました。最初からやり直してください。";
+          setStep(1);
+          break;
       }
+
+      if (response) {
+        setMessages(prevMessages => [...prevMessages, { text: response, sender: 'ai' }]);
+      }
+
+      setMessage("");  // メッセージ送信後にクリア
     }
-  }
+  };
 
   return (
-    <Flex direction="column" h="100vh" bg="gray.100">
-      <Container maxW="container.xl" flex="1" overflowY="auto" py={4}>
-        <VStack spacing={4} align="stretch">
-          <Heading textAlign="center" color="green.700" mb={4}>Chat</Heading>
-          {messages.map((msg) => (
-            <Flex key={msg.id} justify={msg.sender === 'user' ? 'flex-end' : 'flex-start'}>
-              <Box
-                maxW="2xl"
-                bg={msg.sender === 'user' ? 'green.500' : 'gray.300'}
-                color={msg.sender === 'user' ? 'white' : 'black'}
-                borderRadius="lg"
-                p={3}
-              >
-                <Text>{msg.text}</Text>
-                <Text fontSize="xs" textAlign="right" mt={1} opacity={0.7}>
-                  {msg.time}
-                </Text>
-              </Box>
-            </Flex>
-          ))}
-          <div ref={messagesEndRef} />
-        </VStack>
-      </Container>
-
-      <Box bg="white" p={4}>
-        <Container maxW="container.xl">
-          <HStack spacing={2}>
-            <Input
-              placeholder="メッセージを入力"
-              value={message}
-              onChange={(e) => setMessage(e.target.value)}
-              onKeyPress={(e) => e.key === 'Enter' && handleSend()}
-            />
-            <Button
-              onClick={handleSend}
-              colorScheme="green"
-            >
-              送信
-            </Button>
+    <Box width="100%" maxW="400px" margin="0 auto" border="1px solid #ccc" borderRadius="md" padding="20px" boxShadow="md">
+      <VStack spacing={4} height="300px" overflowY="scroll" marginBottom="10px">
+        {messages.map((msg, index) => (
+          <HStack key={index} justify={msg.sender === 'user' ? 'flex-end' : 'flex-start'} width="100%">
+            <Box padding="10px" borderRadius="md" bg={msg.sender === 'user' ? 'green.100' : 'gray.100'}>
+              <Text>{msg.text}</Text>
+            </Box>
           </HStack>
-        </Container>
-      </Box>
-    </Flex>
-  )
-}
+        ))}
+      </VStack>
+
+      <HStack spacing={2}>
+        <Input
+          value={message}
+          onChange={(e) => setMessage(e.target.value)}
+          placeholder="メッセージを入力..."
+        />
+        <Button onClick={handleSend} colorScheme="blue">送信</Button>
+      </HStack>
+    </Box>
+  );
+};
+
+export default ChatBox;
