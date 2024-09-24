@@ -1,97 +1,88 @@
 'use client'
-import { useForm } from 'react-hook-form'
-import { signIn } from 'next-auth/react'
+import { useForm } from 'react-hook-form';
+import { signIn } from 'next-auth/react';
+import {
+  Box,
+  Button,
+  FormControl,
+  FormLabel,
+  Input,
+  Stack,
+  Text,
+  useToast,
+  Flex,
+} from '@chakra-ui/react';
 
 export default function FormWrapper() {
-  interface InputControlProps {
-    name: string;
-    type: string;
-    control: any;
-  }
-  
-  const InputControl: React.FC<InputControlProps> = ({ name, type, control }) => (
-    <input name={name} type={type} {...control} />
-  );
-
   interface InputProps {
     email: string;
     password: string;
   }
-  
-  // フォーム関連の変数定義
-  const {
-    control,
-    handleSubmit
-  } = useForm<InputProps>({
+
+  const { control, handleSubmit } = useForm<InputProps>({
     defaultValues: {
       email: '',
       password: ''
     }
   });
 
-  // フォーム送信処理
+  const toast = useToast();
+
   const onSubmit = async (data: InputProps) => {
     const result = await signIn('user', {
       redirect: false,
       email: data.email,
       password: data.password
     });
-  
+
     if (result?.error) {
-      // ログイン失敗時の処理
+      toast({
+        title: "ログイン失敗",
+        description: "メールアドレスまたはパスワードが間違っています。",
+        status: "error",
+        duration: 5000,
+        isClosable: true,
+      });
     } else {
       location.href = '/';
     }
   };
 
-  // GreenButton のプロパティの型を定義
-  interface GreenButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
-    children: React.ReactNode;
-  }
-  
-  const GreenButton: React.FC<GreenButtonProps> = ({ children, ...props }) => (
-    <button style={{ backgroundColor: 'green', color: 'white' }} {...props}>
-      {children}
-    </button>
-  );
-  
   return (
-    <>
-      <form
-        className="max-w-[450px] w-full mx-auto border rounded-xl p-4 shadow-md"
-        onSubmit={handleSubmit(onSubmit)}
+    <Flex 
+      minH="100vh" 
+      align="center" 
+      justify="center" 
+      bg="gray.100" // 背景色を薄いグレーに設定
+    >
+      <Box 
+        maxW="450px" 
+        w="full" 
+        p={6} 
+        borderWidth={1} 
+        borderRadius="lg" 
+        boxShadow="md" 
+        bg="white"
       >
-        <div className="mb-5">
-          <div className="font-bold mb-2">メールアドレス</div>
-          <div className="flex items-start gap-8">
-            <InputControl
-              name="email"
-              type="email"
-              control={control}
-            />
-          </div>
-        </div>
+        <form onSubmit={handleSubmit(onSubmit)}>
+          <Text textAlign='center' fontSize='4xl' color='green' as='b'>Log in</Text>
+          <Stack spacing={5}>
+            <FormControl>
+              <FormLabel htmlFor="email">Enter your email here</FormLabel>
+              <Input id="email" name="email" type="email" required />
+            </FormControl>
 
-        <div className="mb-5">
-          <div className="font-bold mb-2">パスワード</div>
-          <div className="flex items-start gap-8">
-            <InputControl
-              name="password"
-              type="password"
-              control={control}
-            />
-          </div>
-        </div>
+            <FormControl>
+              <FormLabel htmlFor="password">Enter your password here</FormLabel>
+              <Input id="password" name="password" type="password" required />
+            </FormControl>
 
-        <div className="flex justify-center">
-          <GreenButton
-            className="max-w-[250px] py-3 text-sm"
-            type="submit"
-          >
-            ログイン
-          </GreenButton>
-        </div>
-      </form>
-    </>
-  )
+            <Button type="submit" colorScheme="red" size="lg">
+              Log in
+            </Button>
+          </Stack>
+        </form>
+      </Box>
+    </Flex>
+  );
 }
