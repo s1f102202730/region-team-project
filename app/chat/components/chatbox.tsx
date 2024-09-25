@@ -80,8 +80,17 @@ const ChatBox: React.FC = () => {
   };
 
   return (
-    <Box width="100%" maxW="400px" margin="0 auto" border="1px solid #ccc" borderRadius="md" padding="20px" boxShadow="md">
-      <VStack spacing={4} height="300px" overflowY="scroll" marginBottom="10px">
+    <Box
+      width="100vw"
+      height="100vh"
+      display="flex"
+      flexDirection="column"
+      justifyContent="center"
+      alignItems="center"
+      bg="gray.50"
+      padding="20px"
+    >
+      <VStack spacing={4} width="100%" maxW="1200px" height="80vh" overflowY="scroll" bg="white" border="1px solid #ccc" borderRadius="md" boxShadow="md" padding="20px">
         {messages.map((msg, index) => (
           <HStack key={index} justify={msg.sender === 'user' ? 'flex-end' : 'flex-start'} width="100%">
             <Box padding="10px" borderRadius="md" bg={msg.sender === 'user' ? 'green.100' : 'gray.100'}>
@@ -91,13 +100,14 @@ const ChatBox: React.FC = () => {
         ))}
       </VStack>
 
-      <HStack spacing={2}>
+      <HStack spacing={2} width="100%" maxW="1200px" marginTop="10px">
         <Input
           value={message}
           onChange={(e) => setMessage(e.target.value)}
           placeholder="メッセージを入力..."
+          bg="white"
         />
-        <Button onClick={handleSend} colorScheme="blue">送信</Button>
+        <Button onClick={handleSend} colorScheme="green">送信</Button>
       </HStack>
     </Box>
   );
