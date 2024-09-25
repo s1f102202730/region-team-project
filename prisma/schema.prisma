@@ -7,8 +7,58 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-model users {
-  id         Int      @id @default(autoincrement())
-  name       String
-  created_at DateTime @db.Timestamp(6)
+// ここにUserRoleのenum定義を追加
+enum UserRole {
+  TOURIST       // 観光者
+  MUNICIPALITY  // 地方自治体
+}
+
+// メールアドレス認証用
+model User {
+  id             String    @id @default(uuid())
+  name           String?
+  email          String?   @unique
+  emailVerified  DateTime?
+  image          String?
+  hashedPassword String?
+  role           UserRole  @default(TOURIST)  // ユーザーの役割（観光者または自治体）
+  createdAt      DateTime  @default(now())
+  updatedAt      DateTime  @updatedAt
+  accounts       Account[]
+  touristProfile TouristProfile?  // 観光者プロファイルとの1対1のリレーション
+  municipalityProfile MunicipalityProfile?  // 自治体プロファイルとの1対1のリレーション
+}
+
+//Google認証用
+model Account {
+  id                String  @id @default(uuid())
+  userId            String
+  type              String
+  provider          String
+  providerAccountId String
+  refresh_token     String?
+  access_token      String?
+  expires_at        Int?
+  token_type        String?
+  scope             String?
+  id_token          String?
+  session_state     String?
+  user              User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([provider, providerAccountId])
+}
+
+model TouristProfile {
+  id            String   @id @default(uuid())
+  userId        String   @unique
+  user          User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  favoriteSpots String[]
+  travelHistory String[]
+}
+
+model MunicipalityProfile {
+  id                String   @id @default(uuid())
+  userId            String   @unique
+  user              User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  municipalityName  String
 }
