@@ -64,7 +64,7 @@ export default function Component() {
         </div>
         <div style={styles.option}>
           <h2 style={styles.title}>地域</h2>
-          <Link href="/regional-login" passHref>
+          <Link href="/municipality-login" passHref>
             <div style={styles.button}>
               <PersonIcon />
             </div>
