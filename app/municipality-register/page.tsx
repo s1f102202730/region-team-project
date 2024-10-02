@@ -1,12 +1,24 @@
 'use client';
 
 import { useState } from 'react';
+import {
+  Box,
+  Button,
+  FormControl,
+  FormLabel,
+  Input,
+  Stack,
+  Text,
+  useToast,
+  Flex,
+} from '@chakra-ui/react';
 
 const MunicipalityRegisterPage = () => {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const [successMessage, setSuccessMessage] = useState('');
   const [errorMessage, setErrorMessage] = useState('');
+  const toast = useToast();
 
   const handleRegister = async () => {
     try {
@@ -19,44 +31,73 @@ const MunicipalityRegisterPage = () => {
       });
 
       if (response.ok) {
-        setSuccessMessage('アカウントが作成されました。ログインページにリダイレクトします。');
+        setSuccessMessage('アカウントが作成されました。ログインページにリダイレクトします。 (Account created. Redirecting to login page...)');
         setTimeout(() => {
           window.location.href = '/municipality-login';
         }, 2000);
       } else {
-        const data = await response.json();
-        setErrorMessage(data.error || '登録に失敗しました。');
+        setErrorMessage('登録に失敗しました。 (Registration failed.)');
       }
     } catch (error) {
-      setErrorMessage('エラーが発生しました。もう一度お試しください。');
+      toast({
+        title: '登録失敗 (Registration Failed)',
+        description: 'もう一度お試しください。 (Please try again.)',
+        status: 'error',
+        duration: 5000,
+        isClosable: true,
+      });
     }
   };
 
   return (
-    <div>
-      <h1>自治体アカウント作成</h1>
-      {successMessage && <p>{successMessage}</p>}
-      {errorMessage && <p style={{ color: 'red' }}>{errorMessage}</p>}
-      <label htmlFor="username">ユーザー名</label>
-      <input
-        id="username"
-        name="username"
-        type="text"
-        placeholder="ユーザー名"
-        value={username}
-        onChange={(e) => setUsername(e.target.value)}
-      />
-      <label htmlFor="password">パスワード</label>
-      <input
-        id="password"
-        name="password"
-        type="password"
-        placeholder="パスワード"
-        value={password}
-        onChange={(e) => setPassword(e.target.value)}
-      />
-      <button onClick={handleRegister}>アカウント作成</button>
-    </div>
+    <Flex minH="100vh" align="center" justify="center" bg="blue.100">
+      <Box maxW="450px" w="full" p={6} borderWidth={1} borderRadius="lg" boxShadow="md" bg="white">
+        <Text textAlign="center" fontSize="4xl" color="blue.500" as="b">
+          自治体アカウント作成 (Municipality Account Creation)
+        </Text>
+        <Stack spacing={5} mt={4}>
+          <FormControl>
+            <FormLabel htmlFor="username">ユーザー名 (Username)</FormLabel>
+            <Input
+              id="username"
+              type="text"
+              placeholder="ユーザー名 (Username)"
+              value={username}
+              onChange={(e) => setUsername(e.target.value)}
+              required
+            />
+          </FormControl>
+
+          <FormControl>
+            <FormLabel htmlFor="password">パスワード (Password)</FormLabel>
+            <Input
+              id="password"
+              type="password"
+              placeholder="パスワード (Password)"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              required
+            />
+          </FormControl>
+
+          {errorMessage && (
+            <Text color="red.500" fontSize="sm">
+              {errorMessage}
+            </Text>
+          )}
+
+          <Button colorScheme="blue" size="lg" onClick={handleRegister}>
+            アカウント作成 (Create Account)
+          </Button>
+
+          {successMessage && (
+            <Text color="green.500" fontSize="sm">
+              {successMessage}
+            </Text>
+          )}
+        </Stack>
+      </Box>
+    </Flex>
   );
 };
 

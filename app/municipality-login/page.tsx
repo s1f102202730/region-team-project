@@ -2,12 +2,25 @@
 
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
+import {
+  Box,
+  Button,
+  FormControl,
+  FormLabel,
+  Input,
+  Stack,
+  Text,
+  useToast,
+  Flex,
+  Link,  // Linkコンポーネントをインポート
+} from '@chakra-ui/react';
 
 const MunicipalityLoginPage = () => {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const [errorMessage, setErrorMessage] = useState('');
   const router = useRouter();
+  const toast = useToast();
 
   const handleLogin = async () => {
     try {
@@ -24,41 +37,72 @@ const MunicipalityLoginPage = () => {
         if (data.role === 'municipality') {
           router.push('/municipality');
         } else {
-          setErrorMessage('自治体としてログインできません。');
+          setErrorMessage('自治体としてログインできません。 (Cannot login as a municipality.)');
         }
       } else {
-        throw new Error('ログインに失敗しました。');
+        throw new Error('ログインに失敗しました。 (Login failed.)');
       }
     } catch (error) {
-      setErrorMessage('エラーが発生しました。もう一度お試しください。');
+      toast({
+        title: 'ログイン失敗 (Login Failed)',
+        description: 'ユーザー名またはパスワードが間違っています。 (Username or password is incorrect.)',
+        status: 'error',
+        duration: 5000,
+        isClosable: true,
+      });
     }
   };
 
   return (
-    <div>
-      <h1>自治体ログイン</h1>
-      {errorMessage && <p style={{ color: 'red' }}>{errorMessage}</p>}
-      <label htmlFor="username">ユーザー名</label>
-      <input
-        id="username"
-        name="username"
-        type="text"
-        placeholder="ユーザー名"
-        value={username}
-        onChange={(e) => setUsername(e.target.value)}
-      />
-      <label htmlFor="password">パスワード</label>
-      <input
-        id="password"
-        name="password"
-        type="password"
-        placeholder="パスワード"
-        value={password}
-        onChange={(e) => setPassword(e.target.value)}
-      />
-      <button onClick={handleLogin}>ログイン</button>
-      <p>アカウントをお持ちでないですか？ <a href="/municipality-register">アカウント作成はこちら</a></p>
-    </div>
+    <Flex minH="100vh" align="center" justify="center" bg="blue.100">
+      <Box maxW="450px" w="full" p={6} borderWidth={1} borderRadius="lg" boxShadow="md" bg="white">
+        <Text textAlign="center" fontSize="4xl" color="blue.500" as="b">
+          自治体ログイン (Municipality Login)
+        </Text>
+        <Stack spacing={5} mt={4}>
+          <FormControl>
+            <FormLabel htmlFor="username">ユーザー名 (Username)</FormLabel>
+            <Input
+              id="username"
+              type="text"
+              placeholder="ユーザー名 (Username)"
+              value={username}
+              onChange={(e) => setUsername(e.target.value)}
+              required
+            />
+          </FormControl>
+
+          <FormControl>
+            <FormLabel htmlFor="password">パスワード (Password)</FormLabel>
+            <Input
+              id="password"
+              type="password"
+              placeholder="パスワード (Password)"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              required
+            />
+          </FormControl>
+
+          {errorMessage && (
+            <Text color="red.500" fontSize="sm">
+              {errorMessage}
+            </Text>
+          )}
+
+          <Button colorScheme="blue" size="lg" onClick={handleLogin}>
+            ログイン (Login)
+          </Button>
+
+          <Text textAlign="center">
+            アカウントをお持ちでないですか？ (Don't have an account?) 
+            <Link href="/municipality-register" color="blue.500" textDecoration="underline">
+              アカウント作成はこちら (Create an account here)
+            </Link>
+          </Text>
+        </Stack>
+      </Box>
+    </Flex>
   );
 };
 
