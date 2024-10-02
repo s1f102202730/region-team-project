@@ -15,4 +15,57 @@ model User {
   username  String   @unique @map("username")
 
   @@map("users")
+
+//Google認証用
+model Account {
+  id                String  @id @default(uuid())
+  userId            String
+  type              String
+  provider          String
+  providerAccountId String
+  refresh_token     String?
+  access_token      String?
+  expires_at        Int?
+  token_type        String?
+  scope             String?
+  id_token          String?
+  session_state     String?
+  user              User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([provider, providerAccountId])
+}
+
+model TouristProfile {
+  id            String   @id @default(uuid())
+  userId        String   @unique
+  user          User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  favoriteSpots String[]
+  travelHistory String[]
+}
+
+model MunicipalityProfile {
+  id                String   @id @default(uuid())
+  userId            String   @unique
+  user              User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  municipalityName  String
+}
+
+model Review {
+  id              Int      @id @default(autoincrement())
+  userId          Int      // ユーザーのID
+  user            User     @relation(fields: [userId], references: [id])
+  touristSpotId   Int      // 観光地のID
+  touristSpot     TouristSpot @relation(fields: [touristSpotId], references: [id])
+
+  overallSatisfaction Int      // 全体満足度 (1-5などの評価)
+  infrastructure      Int      // インフラ(トイレ、Wi-Fi、駐車場など)の充実度
+  safety              Int      // 観光地の治安
+  accessibility       Int      // アクセスの利便性
+  serviceQuality      Int      // 施設・サービスの質
+  regionalCharm       Int      // 地域としての魅力
+  informationAccess   Int      // 情報の入手しやすさ
+  revisitIntent       Int      // また訪れたいと思うか (1-5などの評価)
+  
+  createdAt           DateTime @default(now())
+  updatedAt           DateTime @updatedAt
 }
