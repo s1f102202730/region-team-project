@@ -9,23 +9,28 @@ const MunicipalityLoginPage = () => {
   const [errorMessage, setErrorMessage] = useState('');
   const router = useRouter();
 
-  const handleLogin = () => {
-    // ローカルストレージからアカウント情報を取得
-    const accounts = JSON.parse(localStorage.getItem('accounts') || '[]');
+  const handleLogin = async () => {
+    try {
+      const response = await fetch('/api/auth/login', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ username, password }),
+      });
 
-    // 入力されたユーザー名、パスワード、ロールが一致するか確認
-    const accountExists = accounts.find(
-      (account: { username: string; password: string; role: string }) =>
-        account.username === username && account.password === password && account.role === 'municipality'
-    );
-
-    if (accountExists) {
-      // ログイン成功
-      setErrorMessage(''); // エラーメッセージをクリア
-      router.push('/municipality'); // ログイン後に自治体ページへ遷移
-    } else {
-      // ログイン失敗
-      setErrorMessage('ユーザー名またはパスワードが正しくありません。');
+      if (response.ok) {
+        const data = await response.json();
+        if (data.role === 'municipality') {
+          router.push('/municipality');
+        } else {
+          setErrorMessage('自治体としてログインできません。');
+        }
+      } else {
+        throw new Error('ログインに失敗しました。');
+      }
+    } catch (error) {
+      setErrorMessage('エラーが発生しました。もう一度お試しください。');
     }
   };
 
@@ -33,19 +38,26 @@ const MunicipalityLoginPage = () => {
     <div>
       <h1>自治体ログイン</h1>
       {errorMessage && <p style={{ color: 'red' }}>{errorMessage}</p>}
+      <label htmlFor="username">ユーザー名</label>
       <input
+        id="username"
+        name="username"
         type="text"
         placeholder="ユーザー名"
         value={username}
         onChange={(e) => setUsername(e.target.value)}
       />
+      <label htmlFor="password">パスワード</label>
       <input
+        id="password"
+        name="password"
         type="password"
         placeholder="パスワード"
         value={password}
         onChange={(e) => setPassword(e.target.value)}
       />
       <button onClick={handleLogin}>ログイン</button>
+      <p>アカウントをお持ちでないですか？ <a href="/municipality-register">アカウント作成はこちら</a></p>
     </div>
   );
 };

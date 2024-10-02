@@ -9,23 +9,28 @@ const TouristLoginPage = () => {
   const [errorMessage, setErrorMessage] = useState('');
   const router = useRouter();
 
-  const handleLogin = () => {
-    // ローカルストレージからアカウント情報を取得
-    const accounts = JSON.parse(localStorage.getItem('accounts') || '[]');
+  const handleLogin = async () => {
+    try {
+      const response = await fetch('/api/auth/login', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ username, password }),
+      });
 
-    // 入力されたユーザー名、パスワード、ロールが一致するか確認
-    const accountExists = accounts.find(
-      (account: { username: string; password: string; role: string }) =>
-        account.username === username && account.password === password && account.role === 'tourist'
-    );
-
-    if (accountExists) {
-      // ログイン成功
-      setErrorMessage(''); // エラーメッセージをクリア
-      router.push('/tourist'); // ログイン後に観光客ページへ遷移
-    } else {
-      // ログイン失敗
-      setErrorMessage('ユーザー名またはパスワードが正しくありません。');
+      if (response.ok) {
+        const data = await response.json();
+        if (data.role === 'tourist') {
+          router.push('/tourist');
+        } else {
+          setErrorMessage('観光客としてログインできません。');
+        }
+      } else {
+        throw new Error('ログインに失敗しました。');
+      }
+    } catch (error) {
+      setErrorMessage('エラーが発生しました。もう一度お試しください。');
     }
   };
 
@@ -46,7 +51,7 @@ const TouristLoginPage = () => {
         onChange={(e) => setPassword(e.target.value)}
       />
       <button onClick={handleLogin}>ログイン</button>
-      <p>アカウントがありませんか？ <a href="/tourist-register">アカウント作成</a></p>
+      <p>アカウントをお持ちでないですか？ <a href="/tourist-register">アカウント作成はこちら</a></p>
     </div>
   );
 };
