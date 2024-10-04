@@ -7,27 +7,14 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-// ここにUserRoleのenum定義を追加
-enum UserRole {
-  TOURIST       // 観光者
-  MUNICIPALITY  // 地方自治体
-}
-
-// メールアドレス認証用
 model User {
-  id             String    @id @default(uuid())
-  name           String?
-  email          String?   @unique
-  emailVerified  DateTime?
-  image          String?
-  hashedPassword String?
-  role           UserRole  @default(TOURIST)  // ユーザーの役割（観光者または自治体）
-  createdAt      DateTime  @default(now())
-  updatedAt      DateTime  @updatedAt
-  accounts       Account[]
-  touristProfile TouristProfile?  // 観光者プロファイルとの1対1のリレーション
-  municipalityProfile MunicipalityProfile?  // 自治体プロファイルとの1対1のリレーション
-}
+  id        Int      @id @default(autoincrement())
+  password  String
+  role      String
+  createdAt DateTime @default(now()) @map("created_at")
+  username  String   @unique @map("username")
+
+  @@map("users")
 
 //Google認証用
 model Account {
