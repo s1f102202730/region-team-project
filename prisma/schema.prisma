@@ -26,7 +26,6 @@ model TouristSpot {
   id                Int               @id @default(autoincrement())
   name              String            // 観光地の名前
   location          String            // 観光地の位置情報や説明
-  reviews           Review[]          // この観光地へのレビュー
 }
 
 model TouristProfile {
@@ -43,6 +42,7 @@ model MunicipalityProfile {
   user              User     @relation(fields: [userId], references: [id], onDelete: Cascade)
   municipalityName  String
 }
+
 
 model Review {
   id                Int         @id @default(autoincrement())
