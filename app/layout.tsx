@@ -1,4 +1,5 @@
 import { ChakraProvider } from '@chakra-ui/react'
+import { SessionProvider } from 'next-auth/react';
 
 export const metadata = {
   title: "app-routerテストページ",
@@ -14,7 +15,7 @@ export default function RootLayout({
     <html lang="ja">
       <body>
         <ChakraProvider>
-        {children}
+          <SessionProvider>{children}</SessionProvider>
         </ChakraProvider>
         </body>
     </html>
