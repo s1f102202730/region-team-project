@@ -26,6 +26,7 @@ model TouristSpot {
   id                Int               @id @default(autoincrement())
   name              String            // 観光地の名前
   location          String            // 観光地の位置情報や説明
+  reviews   Review[]  // 逆リレーション: TouristSpotは複数のReviewを持つ
 }
 
 model TouristProfile {
