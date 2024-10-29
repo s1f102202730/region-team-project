@@ -26,7 +26,6 @@ model TouristSpot {
   id                Int               @id @default(autoincrement())
   name              String            // 観光地の名前
   location          String            // 観光地の位置情報や説明
-  reviews Review[]
 }
 
 model TouristProfile {
@@ -42,6 +41,7 @@ model MunicipalityProfile {
   userId            Int      @unique   // データ型をIntに変更
   user              User     @relation(fields: [userId], references: [id], onDelete: Cascade)
   municipalityName  String
+  review Review[]
 }
 
 
@@ -50,7 +50,7 @@ model Review {
   userId            Int         // ユーザーのID
   user              User        @relation(fields: [userId], references: [id])
   touristSpotId     Int         // 観光地のID
-  touristSpot       TouristSpot @relation(fields: [touristSpotId], references: [id])
+  touristSpot       MunicipalityProfile @relation(fields: [MunicipalityProfileId], references: [id])
 
   overallSatisfaction Int      // 全体満足度 (1-5などの評価)
   infrastructure      Int      // インフラ(トイレ、Wi-Fi、駐車場など)の充実度
