@@ -12,8 +12,9 @@ const ChatBox: React.FC = () => {
   const [messages, setMessages] = useState<Message[]>([]);
   const [step, setStep] = useState<number>(1); // 会話フローを管理するステップ
   const [hobby, setHobby] = useState<string>(""); // 趣味や興味
-  const [age, setAge] = useState<string>(""); // 年齢
-  const [location, setLocation] = useState<string>(""); // 場所
+  const [currentLocation, setCurrentLocation] = useState<string>(""); // 今住んでいる場所
+  const [duration, setDuration] = useState<string>(""); // 旅行の期間
+  const [location, setLocation] = useState<string>(""); // 行きたい場所
   const [activity, setActivity] = useState<string>(""); // やりたいこと
 
   // 初回にAIから質問を投げかける
@@ -38,28 +39,29 @@ const ChatBox: React.FC = () => {
       // ステップごとのプロンプト作成
       switch(step) {
         case 1:
-          // 趣味や興味に関する質問
-          prompt = `ユーザーの回答から趣味や興味を抽出し、次の質問を生成してください。人間同士の会話のような自然な口調にしてください。\n\nユーザー入力: "${message}"`;
+          // 趣味や興味を保存し、ユーザーの住んでいる場所を尋ねる
+          setHobby(message); // 趣味や興味を保存
+          prompt = `ユーザーは「${message}」に興味があります。次に、ユーザーが住んでいる地域はどこかをいう質問のみをしてください。人間同士の会話のように自然な口調でお願いします。\n\nユーザー入力: "${message}"`;
           break;
         case 2:
-          // 年齢に関する質問
-          setHobby(message); // 趣味や興味を保存
-          prompt = `ユーザーは「${hobby}」に興味があります。次に年齢を質問し、年齢を抽出してください。人間同士の会話のような自然な口調にしてください。\n\nユーザー入力: "${message}"`;
+          // 旅行の期間に関する質問
+          setCurrentLocation(message); // 今住んでいる場所を保存
+          prompt = `ユーザーは「${currentLocation}」に住んでいます。次に旅行の期間（例: 日帰り、二泊三日）を質問し、期間を抽出してください。人間同士の会話のような自然な口調にしてください。\n\nユーザー入力: "${message}"`;
           break;
         case 3:
-          // 場所に関する質問
-          setAge(message); // 年齢を保存
-          prompt = `ユーザーは${age}歳です。次に旅行したい場所（地名や地方）を質問し、場所を抽出してください。人間同士の会話のような自然な口調にしてください。\n\nユーザー入力: "${message}"`;
+          // 行きたい場所に関する質問
+          setDuration(message); // 旅行の期間を保存
+          prompt = `ユーザーは「${duration}」で旅行したいです。次に行きたい場所（地名や地方）を質問し、場所を抽出してください。人間同士の会話のような自然な口調にしてください。\n\nユーザー入力: "${message}"`;
           break;
         case 4:
           // やりたいことに関する質問
-          setLocation(message); // 場所を保存
+          setLocation(message); // 行きたい場所を保存
           prompt = `ユーザーは「${location}」に行きたいです。次に旅行中にやりたいことを質問し、やりたいことを抽出してください。人間同士の会話のような自然な口調にしてください。\n\nユーザー入力: "${message}"`;
           break;
         case 5:
           // 旅行プランの提案
           setActivity(message); // やりたいことを保存
-          prompt = `ユーザーは「${activity}」をやりたいと考えています。これまでの情報（趣味: ${hobby}, 年齢: ${age}, 場所: ${location}, やりたいこと: ${activity}）を基に旅行プランを提案してください。`;
+          prompt = `ユーザーは「${activity}」をやりたいと考えています。これまでの情報（趣味: ${hobby}, 住んでいる地域: ${currentLocation}, 期間: ${duration}, 行きたい場所: ${location}, やりたいこと: ${activity}）を基に旅行プランを提案してください。`;
           break;
         default:
           prompt = `旅行プランの提案が完了しました。`;
