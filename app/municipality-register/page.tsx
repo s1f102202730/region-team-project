@@ -1,100 +1,92 @@
 'use client';
 
-import { useState } from 'react';
-import {
-  Box,
-  Button,
-  FormControl,
-  FormLabel,
-  Input,
-  Stack,
-  Text,
-  useToast,
-  Flex,
-} from '@chakra-ui/react';
+import { useEffect, useState } from 'react';
+import { Box, Button, FormControl, FormLabel, Input, Stack, Select, Text, useToast, Flex } from '@chakra-ui/react';
+import { getPrefecturesAndMunicipalities } from '@/lib/dataUtils';
 
 const MunicipalityRegisterPage = () => {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
-  const [successMessage, setSuccessMessage] = useState('');
-  const [errorMessage, setErrorMessage] = useState('');
+  const [selectedPref, setSelectedPref] = useState('');
+  const [selectedMunicipalityId, setSelectedMunicipalityId] = useState('');
+  const [municipalities, setMunicipalities] = useState<{ name: string; id: string }[]>([]);
+  const { prefectureOptions, municipalityOptions } = getPrefecturesAndMunicipalities();
   const toast = useToast();
+
+  // 都道府県が選択されたら市町村を更新
+  useEffect(() => {
+    if (selectedPref) {
+      setMunicipalities(municipalityOptions[selectedPref] || []);
+    } else {
+      setMunicipalities([]);
+    }
+  }, [selectedPref]);
 
   const handleRegister = async () => {
     try {
       const response = await fetch('/api/auth/register', {
         method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ username, password, role: 'municipality' }),
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ username, password, role: 'municipality', municipalityId: selectedMunicipalityId }),
       });
 
       if (response.ok) {
-        setSuccessMessage('アカウントが作成されました。ログインページにリダイレクトします。 (Account created. Redirecting to login page...)');
-        setTimeout(() => {
-          window.location.href = '/municipality-login';
-        }, 2000);
+        toast({
+          title: 'アカウント作成成功',
+          description: 'ログインページにリダイレクトします。',
+          status: 'success',
+          duration: 5000,
+          isClosable: true,
+        });
+        setTimeout(() => (window.location.href = '/municipality-login'), 2000);
       } else {
-        setErrorMessage('登録に失敗しました。 (Registration failed.)');
+        toast({ title: '登録失敗', description: 'もう一度お試しください。', status: 'error', duration: 5000, isClosable: true });
       }
     } catch (error) {
-      toast({
-        title: '登録失敗 (Registration Failed)',
-        description: 'もう一度お試しください。 (Please try again.)',
-        status: 'error',
-        duration: 5000,
-        isClosable: true,
-      });
+      toast({ title: '登録失敗', description: 'もう一度お試しください。', status: 'error', duration: 5000, isClosable: true });
     }
   };
 
   return (
     <Flex minH="100vh" align="center" justify="center" bg="blue.100">
       <Box maxW="450px" w="full" p={6} borderWidth={1} borderRadius="lg" boxShadow="md" bg="white">
-        <Text textAlign="center" fontSize="4xl" color="blue.500" as="b">
-          自治体アカウント作成 (Municipality Account Creation)
-        </Text>
+        <Text textAlign="center" fontSize="4xl" color="blue.500" as="b">自治体アカウント作成</Text>
         <Stack spacing={5} mt={4}>
           <FormControl>
-            <FormLabel htmlFor="username">ユーザー名 (Username)</FormLabel>
-            <Input
-              id="username"
-              type="text"
-              placeholder="ユーザー名 (Username)"
-              value={username}
-              onChange={(e) => setUsername(e.target.value)}
-              required
-            />
+            <FormLabel htmlFor="username">ユーザー名</FormLabel>
+            <Input id="username" type="text" value={username} onChange={(e) => setUsername(e.target.value)} required />
           </FormControl>
 
           <FormControl>
-            <FormLabel htmlFor="password">パスワード (Password)</FormLabel>
-            <Input
-              id="password"
-              type="password"
-              placeholder="パスワード (Password)"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              required
-            />
+            <FormLabel htmlFor="password">パスワード</FormLabel>
+            <Input id="password" type="password" value={password} onChange={(e) => setPassword(e.target.value)} required />
           </FormControl>
 
-          {errorMessage && (
-            <Text color="red.500" fontSize="sm">
-              {errorMessage}
-            </Text>
-          )}
+          <FormControl>
+            <FormLabel htmlFor="prefecture">都道府県</FormLabel>
+            <Select id="prefecture" placeholder="都道府県を選択" value={selectedPref} onChange={(e) => setSelectedPref(e.target.value)}>
+              {prefectureOptions.map((pref) => (
+                <option key={pref} value={pref}>{pref}</option>
+              ))}
+            </Select>
+          </FormControl>
 
-          <Button colorScheme="blue" size="lg" onClick={handleRegister}>
-            アカウント作成 (Create Account)
-          </Button>
+          <FormControl>
+            <FormLabel htmlFor="municipality">市町村</FormLabel>
+            <Select
+              id="municipality"
+              placeholder="市町村を選択"
+              value={selectedMunicipalityId}
+              onChange={(e) => setSelectedMunicipalityId(e.target.value)}
+              disabled={!selectedPref}
+            >
+              {municipalities.map((municipality) => (
+                <option key={municipality.id} value={municipality.id}>{municipality.name}</option>
+              ))}
+            </Select>
+          </FormControl>
 
-          {successMessage && (
-            <Text color="green.500" fontSize="sm">
-              {successMessage}
-            </Text>
-          )}
+          <Button colorScheme="blue" size="lg" onClick={handleRegister}>アカウント作成</Button>
         </Stack>
       </Box>
     </Flex>

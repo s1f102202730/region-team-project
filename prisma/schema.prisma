@@ -42,6 +42,7 @@ model MunicipalityProfile {
   userId            Int      @unique   // データ型をIntに変更
   user              User     @relation(fields: [userId], references: [id], onDelete: Cascade)
   municipalityName  String
+  municipalityId  Int    // 市町村ID
 }
 
 
