@@ -1,10 +1,12 @@
 generator client {
   provider = "prisma-client-js"
+  previewFeatures = ["postgresqlExtensions"]
 }
 
 datasource db {
   provider = "postgresql"
   url      = env("DATABASE_URL")
+  extentions = [vector()]
 }
 
 model User {
@@ -63,4 +65,26 @@ model Review {
 
   createdAt           DateTime @default(now())
   updatedAt           DateTime @updatedAt
+}
+
+model Memo {
+  id         String          @id @default(uuid())
+  content    String
+  createdAt  DateTime        @default(now())
+  updatedAt  DateTime        @updatedAt
+  embeddings Embedding[]
+}
+
+model Memo {
+  id                 Int          @id @default(autoincrement())
+  content            String
+  embeddings         Embedding[]
+}
+
+model Embedding {
+  id                 Int       @id @default(autoincrement())
+  memoId             Int
+  memo               Memo    @relation(fields: [memoId], references: [id], onDelete: Cascade)
+  content            String
+  vector             Unsupported("vector") // pgvectorで定義されるvector typeのデータ
 }
