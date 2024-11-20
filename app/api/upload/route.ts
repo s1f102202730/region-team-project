@@ -1,6 +1,7 @@
 import { NextResponse } from 'next/server';
 import { PrismaClient } from '@prisma/client';
 import Papa from 'papaparse';
+import { access } from 'fs';
 
 // Prisma Clientのインスタンス作成
 const prisma = new PrismaClient();
@@ -28,7 +29,14 @@ export async function POST(req: Request){
         await prisma.touristSpot.create({
           data: {
             name: record.name,
-            location: record.location,
+            address: record.address,
+            access: record.access,
+            availableDays: record.availableDays,
+            startTime: record.startTime,
+            endTime: record.endTime,
+            latitude: record.latitude,
+            longitude: record.longitude,
+            explanation: record.explanation
           },
         });
       })
