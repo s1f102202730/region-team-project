@@ -16,8 +16,7 @@ RUN npm install --legacy-peer-deps
 # react-hook-formをインストール
 RUN npm install react-hook-form next-auth
 
-# 明示的にopenaiモジュールを再インストール
-RUN npm install openai
+RUN npm install openai  prisma multer papaparse
 
 # 残りのアプリケーションコードをコピー
 COPY ./ /app/

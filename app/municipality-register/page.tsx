@@ -2,25 +2,12 @@
 
 import { useEffect, useState } from 'react';
 import { Box, Button, FormControl, FormLabel, Input, Stack, Select, Text, useToast, Flex } from '@chakra-ui/react';
-import { getPrefecturesAndMunicipalities } from '@/lib/dataUtils';
 
 const MunicipalityRegisterPage = () => {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
-  const [selectedPref, setSelectedPref] = useState('');
-  const [selectedMunicipalityId, setSelectedMunicipalityId] = useState('');
-  const [municipalities, setMunicipalities] = useState<{ name: string; id: string }[]>([]);
-  const { prefectureOptions, municipalityOptions } = getPrefecturesAndMunicipalities();
+  const [municipalityName, setMunicipalityName] = useState('');
   const toast = useToast();
-
-  // 都道府県が選択されたら市町村を更新
-  useEffect(() => {
-    if (selectedPref) {
-      setMunicipalities(municipalityOptions[selectedPref] || []);
-    } else {
-      setMunicipalities([]);
-    }
-  }, [selectedPref]);
 
   const handleRegister = async () => {
     try {
@@ -64,26 +51,7 @@ const MunicipalityRegisterPage = () => {
 
           <FormControl>
             <FormLabel htmlFor="prefecture">都道府県</FormLabel>
-            <Select id="prefecture" placeholder="都道府県を選択" value={selectedPref} onChange={(e) => setSelectedPref(e.target.value)}>
-              {prefectureOptions.map((pref) => (
-                <option key={pref} value={pref}>{pref}</option>
-              ))}
-            </Select>
-          </FormControl>
-
-          <FormControl>
-            <FormLabel htmlFor="municipality">市町村</FormLabel>
-            <Select
-              id="municipality"
-              placeholder="市町村を選択"
-              value={selectedMunicipalityId}
-              onChange={(e) => setSelectedMunicipalityId(e.target.value)}
-              disabled={!selectedPref}
-            >
-              {municipalities.map((municipality) => (
-                <option key={municipality.id} value={municipality.id}>{municipality.name}</option>
-              ))}
-            </Select>
+            <Input id="password" type="password" value={municipalityName} onChange={(e) => setPassword(e.target.value)} required />
           </FormControl>
 
           <Button colorScheme="blue" size="lg" onClick={handleRegister}>アカウント作成</Button>

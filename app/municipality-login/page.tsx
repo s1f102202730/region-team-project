@@ -29,7 +29,7 @@ const MunicipalityLoginPage = () => {
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({ username, password }),
+        body: JSON.stringify({ username, password, municipalityName }),
       });
 
       if (response.ok) {
@@ -79,6 +79,18 @@ const MunicipalityLoginPage = () => {
               type="password"
               placeholder="パスワード (Password)"
               value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              required
+            />
+          </FormControl>
+
+          <FormControl>
+            <FormLabel htmlFor="municipalityName">自治体名 (MunicipalityName)</FormLabel>
+            <Input
+              id="municipalityName"
+              type="municipalityName"
+              placeholder="自治体名 (MunicipalityName)"
+              value={municipalityName}
               onChange={(e) => setPassword(e.target.value)}
               required
             />

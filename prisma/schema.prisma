@@ -24,9 +24,15 @@ model User {
 
 model TouristSpot {
   id                Int               @id @default(autoincrement())
-  name              String            // 観光地の名前
-  location          String            // 観光地の位置情報や説明
-  reviews   Review[]  // 逆リレーション: TouristSpotは複数のReviewを持つ
+  name              String?             // 観光地の名前
+  address           String?             // 観光地の住所
+  access            String?             // アクセス方法
+  availableDays     String?             // 利用可能曜日
+  startTime         String?             // 開始時間
+  endTime           String?             // 終了時間
+  latitude          Int?         　　　　// 緯度
+  longitude         Int?                // 経度
+  explanation       String?             // 説明
 }
 
 model TouristProfile {
@@ -38,11 +44,11 @@ model TouristProfile {
 }
 
 model MunicipalityProfile {
-  id                String   @id @default(uuid())
+  id                Int         @id @default(autoincrement())
   userId            Int      @unique   // データ型をIntに変更
   user              User     @relation(fields: [userId], references: [id], onDelete: Cascade)
   municipalityName  String
-  municipalityId  Int    // 市町村ID
+  review Review[]
 }
 
 
@@ -51,7 +57,7 @@ model Review {
   userId            Int         // ユーザーのID
   user              User        @relation(fields: [userId], references: [id])
   touristSpotId     Int         // 観光地のID
-  touristSpot       TouristSpot @relation(fields: [touristSpotId], references: [id])
+  touristSpot       MunicipalityProfile @relation(fields: [touristSpotId], references: [id])
 
   overallSatisfaction Int      // 全体満足度 (1-5などの評価)
   infrastructure      Int      // インフラ(トイレ、Wi-Fi、駐車場など)の充実度
