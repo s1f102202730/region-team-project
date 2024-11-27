@@ -13,7 +13,7 @@ model User {
   role                 String
   createdAt            DateTime             @default(now()) @map("created_at")
   username             String               @unique @map("username")
-  prefecture           String
+  prefecture           String?
   
   municipalityProfiles MunicipalityProfile?
   reviews              Review[]
