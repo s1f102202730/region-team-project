@@ -8,66 +8,61 @@ datasource db {
 }
 
 model User {
-  id                Int              @id @default(autoincrement())
-  password          String
-  role              String
-  createdAt         DateTime         @default(now()) @map("created_at")
-  username          String           @unique @map("username")
-  
-  // 逆リレーションを追加
-  touristProfiles   TouristProfile[]
-  municipalityProfiles MunicipalityProfile[]
-  reviews           Review[]
-  
+  id                   Int                  @id @default(autoincrement())
+  password             String
+  role                 String
+  createdAt            DateTime             @default(now()) @map("created_at")
+  username             String               @unique @map("username")
+  municipalityProfiles MunicipalityProfile?
+  reviews              Review[]
+  touristProfiles      TouristProfile?
+
   @@map("users")
 }
 
 model TouristSpot {
-  id                Int               @id @default(autoincrement())
-  name              String?             // 観光地の名前
-  address           String?             // 観光地の住所
-  access            String?             // アクセス方法
-  availableDays     String?             // 利用可能曜日
-  startTime         String?             // 開始時間
-  endTime           String?             // 終了時間
-  latitude          Int?         　　　　// 緯度
-  longitude         Int?                // 経度
-  explanation       String?             // 説明
+  id            Int     @id @default(autoincrement())
+  name          String?
+  access        String?
+  address       String?
+  availableDays String?
+  endTime       String?
+  explanation   String?
+  latitude      Int?
+  longitude     Int?
+  startTime     String?
 }
 
 model TouristProfile {
   id            String   @id @default(uuid())
-  userId        Int      @unique   // データ型をIntに変更
-  user          User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId        Int      @unique
   favoriteSpots String[]
   travelHistory String[]
+  user          User     @relation(fields: [userId], references: [id], onDelete: Cascade)
 }
 
 model MunicipalityProfile {
-  id                Int         @id @default(autoincrement())
-  userId            Int      @unique   // データ型をIntに変更
-  user              User     @relation(fields: [userId], references: [id], onDelete: Cascade)
-  municipalityName  String
-  review Review[]
+  userId           Int      @unique
+  municipalityName String
+  id               Int      @id @default(autoincrement())
+  user             User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  review           Review[]
 }
 
-
 model Review {
-  id                Int         @id @default(autoincrement())
-  userId            Int         // ユーザーのID
-  user              User        @relation(fields: [userId], references: [id])
-  touristSpotId     Int         // 観光地のID
-  touristSpot       MunicipalityProfile @relation(fields: [touristSpotId], references: [id])
-
-  overallSatisfaction Int      // 全体満足度 (1-5などの評価)
-  infrastructure      Int      // インフラ(トイレ、Wi-Fi、駐車場など)の充実度
-  safety              Int      // 観光地の治安
-  accessibility       Int      // アクセスの利便性
-  serviceQuality      Int      // 施設・サービスの質
-  regionalCharm       Int      // 地域としての魅力
-  informationAccess   Int      // 情報の入手しやすさ
-  revisitIntent       Int      // また訪れたいと思うか (1-5などの評価)
-
-  createdAt           DateTime @default(now())
-  updatedAt           DateTime @updatedAt
+  id                  Int                 @id @default(autoincrement())
+  userId              Int
+  touristSpotId       Int
+  overallSatisfaction Int
+  infrastructure      Int
+  safety              Int
+  accessibility       Int
+  serviceQuality      Int
+  regionalCharm       Int
+  informationAccess   Int
+  revisitIntent       Int
+  createdAt           DateTime            @default(now())
+  updatedAt           DateTime            @updatedAt
+  touristSpot         MunicipalityProfile @relation(fields: [touristSpotId], references: [id])
+  user                User                @relation(fields: [userId], references: [id])
 }
