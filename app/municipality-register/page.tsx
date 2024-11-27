@@ -14,7 +14,7 @@ const MunicipalityRegisterPage = () => {
       const response = await fetch('/api/auth/register', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ username, password, role: 'municipality', prefecture }),
+        body: JSON.stringify({ username, password, role: 'municipality', prefecture:municipalityName }),
       });
 
       if (response.ok) {

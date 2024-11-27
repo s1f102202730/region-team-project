@@ -18,6 +18,7 @@ import {
 const MunicipalityLoginPage = () => {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
+  const [prefecture, setPrefecture] = useState('');
   const [errorMessage, setErrorMessage] = useState('');
   const router = useRouter();
   const toast = useToast();
@@ -29,7 +30,7 @@ const MunicipalityLoginPage = () => {
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({ username, password, municipalityName }),
+        body: JSON.stringify({ username, password, prefecture }),
       });
 
       if (response.ok) {
@@ -85,13 +86,13 @@ const MunicipalityLoginPage = () => {
           </FormControl>
 
           <FormControl>
-            <FormLabel htmlFor="municipalityName">自治体名 (MunicipalityName)</FormLabel>
+            <FormLabel htmlFor="prefecture">自治体名 (MunicipalityName)</FormLabel>
             <Input
-              id="municipalityName"
-              type="municipalityName"
+              id="prefecture"
+              type="text"
               placeholder="自治体名 (MunicipalityName)"
-              value={municipalityName}
-              onChange={(e) => setPassword(e.target.value)}
+              value={prefecture}
+              onChange={(e) => setPrefecture(e.target.value)}
               required
             />
           </FormControl>

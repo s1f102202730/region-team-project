@@ -18,7 +18,7 @@ export async function POST(request: Request) {
         username,
         password: hashedPassword,
         role,
-        prefecture // municipalityId を保存
+        prefecture
       },
     });
     return NextResponse.json({ message: 'User registered successfully' });
