@@ -51,7 +51,7 @@ const MunicipalityRegisterPage = () => {
 
           <FormControl>
             <FormLabel htmlFor="prefecture">市区町村</FormLabel>
-            <Input id="password" type="prefecture" value={municipalityName} onChange={(e) => setMunicipalityName(e.target.value)} required />
+            <Input id="prefecture" type="prefecture" value={municipalityName} onChange={(e) => setMunicipalityName(e.target.value)} required />
           </FormControl>
 
           <Button colorScheme="blue" size="lg" onClick={handleRegister}>アカウント作成</Button>
