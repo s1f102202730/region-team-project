@@ -5,8 +5,8 @@ import bcrypt from 'bcryptjs';
 const prisma = new PrismaClient();
 
 export async function POST(request: Request) {
-  const { username, password, role, municipalityId } = await request.json(); // municipalityId を追加
-  console.log({ username, password, role, municipalityId });
+  const { username, password, role, prefecture } = await request.json(); 
+  console.log({ username, password, role, prefecture });
 
   // パスワードのハッシュ化
   const hashedPassword = await bcrypt.hash(password, 10);
@@ -18,7 +18,7 @@ export async function POST(request: Request) {
         username,
         password: hashedPassword,
         role,
-        municipalityId, // municipalityId を保存
+        prefecture // municipalityId を保存
       },
     });
     return NextResponse.json({ message: 'User registered successfully' });

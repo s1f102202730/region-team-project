@@ -14,7 +14,7 @@ const MunicipalityRegisterPage = () => {
       const response = await fetch('/api/auth/register', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ username, password, role: 'municipality', municipalityId: selectedMunicipalityId }),
+        body: JSON.stringify({ username, password, role: 'municipality', prefecture }),
       });
 
       if (response.ok) {
@@ -50,8 +50,8 @@ const MunicipalityRegisterPage = () => {
           </FormControl>
 
           <FormControl>
-            <FormLabel htmlFor="prefecture">都道府県</FormLabel>
-            <Input id="password" type="password" value={municipalityName} onChange={(e) => setPassword(e.target.value)} required />
+            <FormLabel htmlFor="prefecture">市区町村</FormLabel>
+            <Input id="password" type="prefecture" value={municipalityName} onChange={(e) => setMunicipalityName(e.target.value)} required />
           </FormControl>
 
           <Button colorScheme="blue" size="lg" onClick={handleRegister}>アカウント作成</Button>
