@@ -33,6 +33,7 @@ model TouristSpot {
   latitude      Int?
   longitude     Int?
   startTime     String?
+  embedding     Float[]? @db.Vector(1536) // ベクトルデータ用カラム
 }
 
 model TouristProfile {
@@ -67,4 +68,20 @@ model Review {
   updatedAt           DateTime            @updatedAt
   touristSpot         MunicipalityProfile @relation(fields: [touristSpotId], references: [id])
   user                User                @relation(fields: [userId], references: [id])
+}
+
+model Memo{
+  id                  Int                 @id @default(autoincrement())
+  content             String
+  createdAt           DateTime            @default(now())
+  updatedAt           DateTime            @updatedAt
+  embeddings          Embedding[]       
+}
+
+model Embedding{
+  id                  Int                 @id @default(autoincrement())
+  memoId              Int
+  memo                Memo    @relation(fields: [memoId], references: [id], onDelete: Cascade)
+  content             String
+  vector              Unsupported("vector")
 }
