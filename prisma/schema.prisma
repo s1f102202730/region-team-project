@@ -72,14 +72,6 @@ model Review {
   user                User                @relation(fields: [userId], references: [id])
 }
 
-model Memo{
-  id                  Int                 @id @default(autoincrement())
-  content             String
-  createdAt           DateTime            @default(now())
-  updatedAt           DateTime            @updatedAt
-  embeddings          Embedding[]       
-}
-
 model Embedding{
   id                  Int                 @id @default(autoincrement())
   memoId              Int
