@@ -1,10 +1,12 @@
 generator client {
   provider = "prisma-client-js"
+  previewFeatures = ["postgresqlExtensions"]
 }
 
 datasource db {
   provider = "postgresql"
   url      = env("DATABASE_URL")
+  extensions = [vector] // pgvector拡張を有効化
 }
 
 model User {
@@ -33,7 +35,7 @@ model TouristSpot {
   latitude      Int?
   longitude     Int?
   startTime     String?
-  embedding     Float[]? @db.Vector(1536) // ベクトルデータ用カラム
+  embedding Unsupported("vector")? @db.Vector(1536)
 }
 
 model TouristProfile {
