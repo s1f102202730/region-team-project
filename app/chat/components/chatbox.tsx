@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Box, Input, Button, VStack, HStack, Text } from '@chakra-ui/react';
-import { ask } from '../../../lib/api';
+import { ask } from '../../lib/api';
 
 type Message = {
   text: string;
@@ -20,11 +20,33 @@ const ChatBox: React.FC = () => {
   // 初回にAIから質問を投げかける
   useEffect(() => {
     const initialMessage = {
-      text: "こんにちは！まず、あなたの趣味や興味を教えてください。",
+      text: "こんにちは！旅行の計画をサポートします！まず、あなたの趣味や興味のあるものについて教えてください。",
       sender: 'ai' as const,
     };
     setMessages([initialMessage]);
   }, []);
+
+  async function fetchRecommendations(query: string) {
+    const response = await fetch("/api/search", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ query }),
+    });
+    return response.json();
+  }
+
+  const handleGeneratePlan = async () => {
+    const recommendations = await fetchRecommendations(`${hobby} ${activity}`);
+    const prompt = `以下のデータに基づいて旅行プランを提案してください:
+    趣味: ${hobby}, やりたいこと: ${activity}, 滞在期間: ${duration}, 現在の場所: ${currentLocation}
+    検索結果: ${recommendations.map((rec: { name: string }) => rec.name).join(", ")}`;
+
+    const response = await ask(prompt);
+
+    if (response) {
+      setMessages((prev) => [...prev, { text: response, sender: 'ai' }]);
+    }
+  };
 
   const handleSend = async () => {
     if (message.trim()) {
@@ -81,6 +103,7 @@ const ChatBox: React.FC = () => {
         setMessage(""); // メッセージ送信後にクリア
       }
     }
+  
   };
 
   return (
