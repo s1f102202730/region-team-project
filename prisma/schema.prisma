@@ -1,10 +1,12 @@
 generator client {
   provider = "prisma-client-js"
+  previewFeatures = ["postgresqlExtensions"]
 }
 
 datasource db {
   provider = "postgresql"
   url      = env("DATABASE_URL")
+  extensions = [vector()]
 }
 
 model User {
@@ -33,7 +35,7 @@ model TouristSpot {
   latitude      Int?
   longitude     Int?
   startTime     String?
-  embedding     Float[]? @db.Vector(1536) // ベクトルデータ用カラム
+  embeddings    Embedding[]
 }
 
 model TouristProfile {
@@ -70,18 +72,10 @@ model Review {
   user                User                @relation(fields: [userId], references: [id])
 }
 
-model Memo{
-  id                  Int                 @id @default(autoincrement())
-  content             String
-  createdAt           DateTime            @default(now())
-  updatedAt           DateTime            @updatedAt
-  embeddings          Embedding[]       
-}
-
 model Embedding{
   id                  Int                 @id @default(autoincrement())
-  memoId              Int
-  memo                Memo    @relation(fields: [memoId], references: [id], onDelete: Cascade)
+  touristSpotId       Int
+  touristSpot         TouristSpot    @relation(fields: [touristSpotId], references: [id], onDelete: Cascade)
   content             String
   vector              Unsupported("vector")
 }
