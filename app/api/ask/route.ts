@@ -17,7 +17,6 @@ export async function POST(request: Request) {
     const completion = await openai.chat.completions.create({
       messages: [{ role: 'user', content: message }],
       model: "gpt-4o-mini",
-      stream: true,
     });
 
     // AIからの回答
