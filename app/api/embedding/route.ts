@@ -1,6 +1,6 @@
 import { NextResponse } from 'next/server';
 import { PrismaClient } from '@prisma/client';
-import {OpenAIEmbeddings} from 'langchain_openai'; 
+import { OpenAIEmbeddings } from 'langchain/embeddings/openai'; 
 
 const prisma = new PrismaClient();
 
