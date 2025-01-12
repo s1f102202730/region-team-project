@@ -1,7 +1,12 @@
-FROM node:18-alpine
+FROM node:18
 
 # 必要なビルドツールとgitをインストール
-RUN apk add --no-cache g++ make py3-pip git
+RUN apt-get update && apt-get install -y \
+    g++ \
+    make \
+    python3-pip \
+    git \
+    libssl-dev
 
 # 作業ディレクトリを設定
 WORKDIR /app
@@ -13,16 +18,16 @@ COPY package*.json ./
 RUN npm install -g npm@9.7.2 node-gyp
 RUN npm install --legacy-peer-deps
 
-# react-hook-formをインストール
-RUN npm install react-hook-form next-auth
-
-RUN npm install openai  prisma multer papaparse
+# react-hook-formとその他のパッケージをインストール
+RUN npm install react-hook-form next-auth openai prisma multer papaparse
 
 # 残りのアプリケーションコードをコピー
 COPY ./ /app/
 
 # 明示的にopenaiモジュールを再インストール
 RUN npm install openai
+
+RUN npx prisma generate
 
 # アプリケーションの起動
 CMD ["npm", "run", "dev"]
