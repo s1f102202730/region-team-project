@@ -108,12 +108,25 @@ const ChatBox: React.FC = () => {
     <Box
       width="100vw" // 画面全体の幅に
       height="100vh" // 画面全体の高さに
-      bg="white" // ベースカラーを白に
+      bg="blue.50"// ベースカラーを青に
       padding="20px"
       boxShadow="xl"
       display="flex"
       flexDirection="column"
     >
+      <Box
+        as="header"
+        width="100%"
+        textAlign="center"
+        padding="10px"
+        bg="blue.500"
+        color="white"
+        fontSize="xl"
+        fontWeight="bold"
+        marginBottom="10px"
+      >
+        旅先提案AI「旅AI」
+        </Box>
       <VStack
         spacing={4}
         height="80vh" // メッセージリストの高さを画面の80%に

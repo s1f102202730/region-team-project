@@ -1,7 +1,7 @@
 import { ChakraProvider } from '@chakra-ui/react'
 
 export const metadata = {
-  title: "app-routerテストページ",
+  title: "旅AI",
   description: "Next.jsのApp Routerでコンポーネント管理する",
 };
 
